@@ -34,6 +34,45 @@ namespace cs18_Assignment
             }
         }
 
+
+        public bool IsInBounds(int x, int y)
+        {
+            return x >= 0 && x < this.Width && y >= 0 && y < this.Height;
+        }
+
+
+        public bool IsDirt(int x, int y)
+        {
+            return IsInBounds(x, y) && _grid[x, y] == CellType.Dirt;
+        }
+
+        public bool IsObstacle(int x, int y)
+        {
+            return IsInBounds(x, y) && _grid[x, y] == CellType.Obstacle;
+        }
+
+
+        public void AddObstacle(int x, int y)
+        {
+            _grid[x, y] = CellType.Obstacle;
+        }
+
+        public void AddDirt(int x, int y)
+        {
+            _grid[x, y] = CellType.Dirt;
+        }
+
+        public void Clean(int x, int y)
+        
+        {
+            if( IsInBounds(x, y))
+            {
+                _grid[x, y] = CellType.Cleaned;
+            }
+        }
+        
+
+
         public void Display(int robotX, int robotY)
         {
             // display  2d grid, accepts location x and y
