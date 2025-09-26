@@ -1,6 +1,6 @@
 #  Take-Home Activity: The Strategy-Powered Vacuum Bot
 
-## 🎯 Objective
+## 🎯 Objective ✅
 Refactor your vacuum robot code by implementing the **Strategy Design Pattern** to make its cleaning algorithm swappable.  
 You will then present your solution in a short video.
 
@@ -44,3 +44,4 @@ You will then present your solution in a short video.
 
 - [ ] Submit all updated **C# source code files** (or GitHub repo link)  
 - [ ] Submit your **video link** (YouTube unlisted, Loom, or cloud share)  
+
