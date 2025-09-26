@@ -34,7 +34,41 @@ namespace cs18_Assignment
             }
         }
 
+        public void Display(int robotX, int robotY)
+        {
+            // display  2d grid, accepts location x and y
 
+
+            Console.Clear();
+            Console.WriteLine("vacuum cleaner robot simulation:");
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("Legends: #=obstacle, D=Dirt, .=Empty, R=Robot, C=Cleaned");
+
+            // display loop using grid
+
+            for (int y= 0; y < this.Height; y++)
+            {
+                for (int x = 0; x < this.Width; x++)
+                {
+                    if( x == robotX && y == robotY)
+                    {
+                        Console.Write("R ");
+                    }
+                    else
+                    {
+                        switch(_grid[x,y])
+                        {
+                            case CellType.Empty: Console.Write(". "); break;
+                            case CellType.Dirt: Console.Write("D "); break;
+                            case CellType.Obstacle: Console.Write("# "); break;
+                            case CellType.Cleaned: Console.Write("C "); break;
+                        }
+                    }
+                }
+                Console.WriteLine();
+            }
+
+        }
 
 
 
@@ -44,10 +78,12 @@ namespace cs18_Assignment
         public static void Main(string[] args)
         {
             
-            Map myMap = new Map(12, 15);
+            Map myMap = new Map(5, 5);
 
-            Console.WriteLine($"Grid Width is {myMap.Width}");
-            Console.WriteLine($"Grid Height is {myMap.Height}");
+            // Console.WriteLine($"Grid Width is {myMap.Width}");
+            // Console.WriteLine($"Grid Height is {myMap.Height}");
+
+            myMap.Display(2, 3);
         }
     }
 
