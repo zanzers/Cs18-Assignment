@@ -1,44 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 
 
 namespace RobotCleaner
 {
-    
+
     class Program
     {
         public static void Main(string[] args)
         {
             Console.WriteLine($"Initialize CleaningBot");
+
+            Map myMap = new Map(15, 10);
+
+            myMap.AddDirt(5, 3);   
+            myMap.AddDirt(10, 8);  
+            myMap.AddDirt(7, 2);
+
+            myMap.AddObstacle(6, 2);
+            myMap.AddObstacle(6, 3);
+            myMap.AddObstacle(6, 4);
+            myMap.AddObstacle(6, 5);
+            myMap.AddObstacle(6, 6);
+
+            myMap.AddObstacle(6, 8);
+
+            myMap.AddObstacle(11, 7);
+            myMap.AddObstacle(12, 7);
+            myMap.AddObstacle(12, 8);
+
             
-            Map myMap = new Map(20, 10);
-
-            myMap.AddDirt(5, 3);
-            myMap.AddDirt(10, 8);
-            myMap.AddObstacle(2, 5);
-            myMap.AddObstacle(12, 1);
-
-            myMap.Display(10, 9);
+            myMap.Display(0, 0);
 
 
-            Robot robot  = new Robot(myMap);
+
+            Robot robot = new Robot(myMap);
+            robot.SetStrategy(new SPatternStrategy());
             robot.StartCleaning();
 
-            Console.WriteLine("Cleaning completed!");
+            
         }
     }
 
 
-     public class Map
-        {
-            private enum CellType { Empty, Dirt, Obstacle, Cleaned }
-            private CellType[,] _grid;
-            public int Width { get; private set; }
-            public int Height { get; private set; }
-            
-        
+    public class Map
+    {
+        private enum CellType { Empty, Dirt, Obstacle, Cleaned }
+        private CellType[,] _grid;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+
         public Map(int width, int height)
         {
             this.Width = width;
@@ -51,8 +66,8 @@ namespace RobotCleaner
                 for (int y = 0; y < height; y++)
                 {
 
-                _grid[x, y] = CellType.Empty;    
-               }
+                    _grid[x, y] = CellType.Empty;
+                }
             }
         }
 
@@ -85,15 +100,15 @@ namespace RobotCleaner
         }
 
         public void Clean(int x, int y)
-        
+
         {
-            if( IsInBounds(x, y))
+            if (IsInBounds(x, y))
             {
                 _grid[x, y] = CellType.Cleaned;
             }
         }
-        
-      
+
+
 
         public void Display(int robotX, int robotY)
         {
@@ -107,17 +122,17 @@ namespace RobotCleaner
 
             // display loop using grid
 
-            for (int y= 0; y < this.Height; y++)
+            for (int y = 0; y < this.Height; y++)
             {
                 for (int x = 0; x < this.Width; x++)
                 {
-                    if( x == robotX && y == robotY)
+                    if (x == robotX && y == robotY)
                     {
                         Console.Write("R ");
                     }
                     else
                     {
-                        switch(_grid[x,y])
+                        switch (_grid[x, y])
                         {
                             case CellType.Empty: Console.Write(". "); break;
                             case CellType.Dirt: Console.Write("D "); break;
@@ -128,7 +143,7 @@ namespace RobotCleaner
                 }
                 Console.WriteLine();
             }
-                Thread.Sleep(200); 
+            Thread.Sleep(200);
         }
 
     }
@@ -136,6 +151,7 @@ namespace RobotCleaner
     public class Robot
     {
         private readonly Map _map;
+        private ICleaningStrategy _strategy;
 
         public int X { get; private set; }
         public int Y { get; private set; }
@@ -148,12 +164,39 @@ namespace RobotCleaner
             this.Y = 0;
         }
 
-        public bool Move( int newX, int newY)
+
+        public void SetStrategy(ICleaningStrategy strategy)
+        {
+            this._strategy = strategy;
+        }
+
+
+
+        public void StartCleaning()
+        {
+            if (_strategy == null)
+            {
+                Console.WriteLine("No cleaning strategy set!");
+            }
+            else
+            {
+                var stopwatch = Stopwatch.StartNew();
+                _strategy.Clean(this, _map);
+                stopwatch.Stop();
+                double seconds = stopwatch.ElapsedMilliseconds / 1000.0;
+                Console.WriteLine($"Cleaning finished in {stopwatch.ElapsedMilliseconds} ms ({seconds:F2} seconds).");
+            }
+        }
+
+
+
+
+        public bool Move(int newX, int newY)
         {
             // Set new location and display map in the grid
 
 
-            if(_map.IsInBounds(newX, newY) && !_map.IsObstacle(newX,  newY))
+            if (_map.IsInBounds(newX, newY) && !_map.IsObstacle(newX, newY))
             {
                 this.X = newX;
                 this.Y = newY;
@@ -172,41 +215,50 @@ namespace RobotCleaner
 
         public void CleanCurrentSpot()
         {
-            if(_map.IsDirt(this.X, this.Y))
+            if (_map.IsDirt(this.X, this.Y))
             {
                 _map.Clean(this.X, this.Y);
                 _map.Display(this.X, this.Y);
             }
         }
 
-        public void StartCleaning()
+    }
+
+
+    public interface ICleaningStrategy
+    {
+        void Clean(Robot robot, Map map);
+    }
+
+    public class SPatternStrategy : ICleaningStrategy
+    {
+        public void Clean(Robot robot, Map map)
         {
+
             Console.WriteLine("Starting cleaning The room...");
-            // flag the directions
+            int direction = 1;
 
-
-            int direction = 1; 
-            
-
-            for(int y = 0; y < _map.Height; y++)
+            for (int y = 0; y < map.Height; y++)
             {
-                int startX = (direction == 1) ? 0 : _map.Width - 1;
-                int endX  = (direction == 1) ? _map.Width : -1;
+                int startX = (direction == 1) ? 0 : map.Width - 1;
+                int endX = (direction == 1) ? map.Width : -1;
 
-               for (int x = startX; (direction == 1) ? x < endX : x > endX; x += direction)
+                for (int x = startX; (direction == 1) ? x < endX : x > endX; x += direction)
                 {
-                //    if(!Move(x, y))
-                //    {
-                //     // obstacle detected, skip to next cell
-                //     continue;
-                //    }
-                    Move(x, y);
-                   CleanCurrentSpot();
+                    //    if(!Move(x, y))
+                    //    {
+                    //     // obstacle detected, skip to next cell
+                    //     continue;
+                    //    }
+                    robot.Move(x, y);
+                    robot.CleanCurrentSpot();
                 }
 
-                direction *= -1; 
+                direction *= -1;
             }
         }
-
     }
+
+
+   
 } 
