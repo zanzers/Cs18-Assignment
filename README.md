@@ -42,6 +42,6 @@ You will then present your solution in a short video.
 
 ## 📦 Part 3: Submission
 
-- [ ] Submit all updated **C# source code files** (or GitHub repo link)  
-- [ ] Submit your **video link** (YouTube unlisted, Loom, or cloud share)  
+- [✓] Submit all updated **C# source code files** (or GitHub repo link)  
+- [✓] Submit your **video link** (YouTube unlisted, Loom, or cloud share)  
 
