@@ -43,9 +43,6 @@ namespace VacuumBot
             }
         }
 
-
-
-
         public bool Move(int newX, int newY)
         {
             // Set new location and display map in the grid
@@ -178,6 +175,8 @@ namespace VacuumBot
         private (int x, int y) FindNearestDirt(Robot robot, List<(int X, int Y)> dirtyCells)
         {
             (int x, int y) nearest = dirtyCells[0];
+
+            // Manhattan distance
             int bestDir = Math.Abs(nearest.x - robot.X) + Math.Abs(nearest.y - robot.Y);
 
             foreach (var dirt in dirtyCells)
@@ -198,7 +197,11 @@ namespace VacuumBot
 
             return FindPath(map, robot.X, robot.Y, target.x, target.y);
         }
+    
 
+       
+       
+    
         public List<(int x, int y)> FindPath(Map map, int startX, int startY, int targetX, int targetY)
         {
 
@@ -207,6 +210,7 @@ namespace VacuumBot
             var visited = new bool[map.Width, map.Height];
             var parent = new Dictionary<(int, int), (int, int)>();
 
+            // Breadth-First Search (BFS) 
             queue.Enqueue((startX, startY));
             visited[startX, startY] = true;
 
@@ -229,6 +233,7 @@ namespace VacuumBot
                     return path;
                 }
 
+                // Neighbors 
                 foreach (var (dx, dy) in directions)
                 {
                     int nx = cx + dx;

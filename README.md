@@ -33,10 +33,10 @@ You will then present your solution in a short video.
 
 ## 🎥 Part 2: Video Explainer (3–5 Minutes)
 
-- [ ] Record a short video explaining your work  
-- [ ] Show **both strategies working** in the demo  
-- [ ] Explain the Strategy Pattern (interface + strategy classes + Robot refactor)  
-- [ ] Analyze why this design is more flexible  
+- [✓] Record a short video explaining your work  
+- [✓] Show **both strategies working** in the demo  
+- [✓] Explain the Strategy Pattern (interface + strategy classes + Robot refactor)  
+- [✓] Analyze why this design is more flexible  
 
 ---
 
